@@ -154,6 +154,11 @@ if [ -f services/piper-tts/docker-compose.yml ]; then
     cd services/piper-tts && docker compose up -d && cd "$SCRIPT_DIR"
 fi
 
+if [ -f services/langfuse/docker-compose.yaml ]; then
+    echo "    Starting LangFuse..."
+    cd services/langfuse && docker compose up -d && cd "$SCRIPT_DIR"
+fi
+
 echo ""
 
 # --- Step 6: Health checks ---
@@ -176,6 +181,12 @@ if curl -sf http://localhost:5847 > /dev/null 2>&1; then
     echo "    ✅ Piper TTS: http://localhost:5847"
 else
     echo "    ⚠️  Piper TTS not responding (may still be starting)"
+fi
+
+if curl -sf http://localhost:13000 > /dev/null 2>&1; then
+    echo "    ✅ LangFuse: http://localhost:13000"
+else
+    echo "    ⚠️  LangFuse not responding (may still be starting)"
 fi
 
 echo ""

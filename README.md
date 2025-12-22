@@ -20,6 +20,12 @@ tools/
 | OpenMemory API | 8787 | Cross-project memory for agents |
 | OpenMemory Dashboard | 3737 | Web UI for memory inspection |
 | Piper TTS | 5847 | Local text-to-speech |
+| LangFuse Web | 13000 | LLM observability UI |
+| LangFuse Worker | 13030 | Background trace processing |
+| LangFuse Postgres | 15433 | LangFuse database |
+| LangFuse ClickHouse | 18123 | Analytics database |
+| LangFuse MinIO | 19090 | S3-compatible storage |
+| LangFuse Redis | 16379 | Cache |
 
 ## Setup
 
@@ -49,6 +55,22 @@ Point your IDE/agent MCP config to scripts in `mcp/`:
 
 - OpenMemory data: Docker volume `openmemory_data` (survives updates)
 - Piper models: `services/piper-tts/models/` (gitignored)
+- LangFuse data: Docker volumes `ai-agent_langfuse_*` (external, shared)
+
+## LangFuse
+
+Login: `admin@aiagent.local` / `admin123`
+
+API keys (pre-configured):
+- Public: `pk-lf-ai-agent-public-key`
+- Secret: `sk-lf-ai-agent-secret-key`
+
+Maintenance (ClickHouse can bloat):
+```bash
+./scripts/langfuse-maintenance.sh --help    # See options
+./scripts/langfuse-maintenance.sh --setup   # First-time optimization
+./scripts/langfuse-maintenance.sh           # Regular cleanup
+```
 
 ## Notes
 
