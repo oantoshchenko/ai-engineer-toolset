@@ -1,0 +1,34 @@
+# Third-party repositories (cloned by update.sh)
+vendor/
+
+# Old directories (to be removed after migration)
+/OpenMemory/
+/openmemory-local/
+/piper-tts-local/
+
+# Secrets
+.env
+
+# Logs
+*.log
+mcp-debug.log
+
+# IDE (keep .augment for Augment skills/commands)
+.idea/
+
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/
+venv/
+
+# Node
+node_modules/
+
+# Docker
+*.tar.gz
+
