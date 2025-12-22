@@ -10,8 +10,7 @@ CLICKHOUSE_PASSWORD="clickhouse"
 CLICKHOUSE_DB="default"
 CONTAINER_NAME="langfuse-langfuse-clickhouse-1"
 COMPOSE_FILE="docker-compose.yaml"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-LANGFUSE_DIR="$SCRIPT_DIR/../services/langfuse"
+SERVICE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 execute_query() {
     curl -s --user "${CLICKHOUSE_USER}:${CLICKHOUSE_PASSWORD}" \
@@ -155,7 +154,7 @@ wait_for_clickhouse() {
 
 restart_clickhouse() {
     echo "Restarting ClickHouse to apply changes and reclaim disk space..."
-    cd "$LANGFUSE_DIR"
+    cd "$SERVICE_DIR"
     docker compose -f "$COMPOSE_FILE" restart langfuse-clickhouse >/dev/null 2>&1
 
     echo "Waiting for ClickHouse to be ready..."
@@ -278,7 +277,7 @@ update_containers() {
     echo "  3. Preserve all data volumes"
     echo ""
 
-    cd "$LANGFUSE_DIR"
+    cd "$SERVICE_DIR"
 
     echo "Current image versions:"
     docker compose -f "$COMPOSE_FILE" images 2>/dev/null || true

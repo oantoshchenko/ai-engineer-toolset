@@ -6,11 +6,13 @@ MCP infrastructure for AI assistants. Syncs across machines via Git.
 
 ```
 tools/
-├── mcp/           # MCP wrapper scripts (sourced by IDE/agent)
-├── services/      # Docker Compose configs (committed)
-├── vendor/        # Third-party repos (gitignored, cloned by update.sh)
-├── patches/       # Patches applied to vendor repos
-└── update.sh      # Idempotent setup script
+├── mcp/              # MCP wrapper scripts (sourced by IDE/agent)
+├── services/         # Each service has its own update.sh
+│   ├── openmemory/   # docker-compose.yml, update.sh
+│   ├── piper-tts/    # docker-compose.yml, update.sh, patches/
+│   └── langfuse/     # docker-compose.yaml, update.sh, maintenance.sh
+├── vendor/           # Third-party repos (gitignored)
+└── update.sh         # Runs all services/*/update.sh
 ```
 
 ## Services
@@ -36,11 +38,11 @@ cd ~/ws/tools
 ./update.sh
 ```
 
-The script:
-1. Clones/updates vendor repos (OpenMemory pinned to v1.2.3)
-2. Applies patches
-3. Builds Docker images
-4. Starts all services
+The master script runs each service's `update.sh`, which handles:
+- Cloning/updating vendor repos
+- Applying patches (if any)
+- Building Docker images
+- Starting containers
 
 ## MCP Configuration
 
@@ -67,13 +69,47 @@ API keys (pre-configured):
 
 Maintenance (ClickHouse can bloat):
 ```bash
-./scripts/langfuse-maintenance.sh --help    # See options
-./scripts/langfuse-maintenance.sh --setup   # First-time optimization
-./scripts/langfuse-maintenance.sh           # Regular cleanup
+./services/langfuse/maintenance.sh --help    # See options
+./services/langfuse/maintenance.sh --setup   # First-time optimization
+./services/langfuse/maintenance.sh           # Regular cleanup
 ```
+
+## Adding a New Service
+
+1. Create `services/<name>/` directory
+2. Add `docker-compose.yml` with your service config
+3. Create `update.sh` that handles the full lifecycle:
+
+```bash
+#!/bin/bash
+set -e
+SERVICE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SERVICE_DIR"  # IMPORTANT: cd before docker compose commands
+
+echo "=== <Name> ==="
+
+# If using a vendor repo:
+TOOLS_ROOT="$(cd "$SERVICE_DIR/../.." && pwd)"
+VENDOR_DIR="$TOOLS_ROOT/vendor"
+# Clone/update vendor repo here...
+
+# If patches needed, put them in patches/ subdirectory
+
+docker compose build  # or 'docker compose pull' for pre-built images
+docker compose up -d
+
+# Health check
+sleep 3
+curl -sf http://localhost:<port> > /dev/null && echo "  ✅ <Name>: http://localhost:<port>"
+```
+
+4. Make executable: `chmod +x services/<name>/update.sh`
+5. Update this README (Services table, Data Persistence if applicable)
+6. Run `./update.sh` to test
+
+The master `update.sh` auto-discovers and runs all `services/*/update.sh` scripts.
 
 ## Notes
 
 - OpenMemory pinned to v1.2.3 because later versions removed dashboard source
 - Run `./update.sh` after pulling to sync vendor deps
-
