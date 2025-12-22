@@ -49,23 +49,37 @@ mkdir -p vendor
 clone_or_pull() {
     local name="$1"
     local url="$2"
+    local ref="$3"  # Optional: branch, tag, or commit to checkout
     local dir="vendor/$name"
-    
+
     if [ ! -d "$dir" ]; then
         echo "    Cloning $name..."
         git clone "$url" "$dir"
+        if [ -n "$ref" ]; then
+            cd "$dir"
+            git checkout "$ref"
+            cd "$SCRIPT_DIR"
+        fi
     else
-        echo "    Pulling $name..."
+        echo "    Updating $name..."
         cd "$dir"
         git fetch origin
-        git pull --ff-only origin main 2>/dev/null || git pull --ff-only origin master 2>/dev/null || {
-            echo "    ⚠️  Could not fast-forward $name (local changes?)"
-        }
+        if [ -n "$ref" ]; then
+            # If pinned to a ref, just checkout that ref
+            git checkout "$ref"
+        else
+            # Otherwise try to fast-forward
+            git pull --ff-only origin main 2>/dev/null || git pull --ff-only origin master 2>/dev/null || {
+                echo "    ⚠️  Could not fast-forward $name (local changes?)"
+            }
+        fi
         cd "$SCRIPT_DIR"
     fi
 }
 
-clone_or_pull "OpenMemory" "https://github.com/CaviraOSS/OpenMemory.git"
+# OpenMemory: pinned to v1.2.3 because later versions removed dashboard source
+# TODO: Update when upstream fixes dashboard or switch to hosted dashboard
+clone_or_pull "OpenMemory" "https://github.com/CaviraOSS/OpenMemory.git" "v1.2.3"
 clone_or_pull "piper-tts-mcp" "https://github.com/CryptoDappDev/piper-tts-mcp.git"
 
 # --- Step 2b: Apply patches ---
