@@ -12,6 +12,36 @@ VENDOR_URL="https://github.com/CryptoDappDev/piper-tts-mcp.git"
 
 echo "=== Piper TTS ==="
 
+# --- Check/install uv (Python package manager) ---
+if command -v uv &> /dev/null; then
+    echo "  uv is installed: $(uv --version)"
+else
+    echo "  Installing uv..."
+    if command -v brew &> /dev/null; then
+        brew install uv
+    else
+        # Fallback to curl installation
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        export PATH="$HOME/.cargo/bin:$PATH"
+    fi
+    echo "  Installed: $(uv --version)"
+fi
+
+# --- Check/install SDL dependencies (required for pygame) ---
+echo "  Checking SDL dependencies..."
+if command -v brew &> /dev/null; then
+    for dep in sdl2 sdl2_image sdl2_mixer sdl2_ttf pkg-config; do
+        if brew list "$dep" &> /dev/null; then
+            echo "  ✅ $dep installed"
+        else
+            echo "  Installing $dep..."
+            brew install "$dep"
+        fi
+    done
+else
+    echo "  ⚠️  Homebrew not found, SDL dependencies may be missing"
+fi
+
 # --- Clone or update vendor repo ---
 mkdir -p "$VENDOR_DIR"
 
@@ -49,6 +79,13 @@ fi
 if command -v uv &> /dev/null; then
     echo "  Installing Python dependencies..."
     cd "$VENDOR_DIR/$VENDOR_NAME"
+
+    # Set compiler flags for SDL (needed for pygame)
+    if command -v brew &> /dev/null; then
+        export CFLAGS="-I$(brew --prefix sdl2)/include/SDL2 -I$(brew --prefix)/include"
+        export LDFLAGS="-L$(brew --prefix sdl2)/lib -L$(brew --prefix)/lib"
+    fi
+
     uv sync 2>/dev/null || uv pip install -e .
     cd "$SERVICE_DIR"
 else

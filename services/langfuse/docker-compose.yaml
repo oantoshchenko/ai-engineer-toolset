@@ -194,21 +194,16 @@ services:
       LANGFUSE_INIT_USER_NAME: "Admin User"
       LANGFUSE_INIT_USER_PASSWORD: "admin123"
 
-# Use existing volumes from ai-agent (external) or create new ones
+# Volumes will be created automatically if they don't exist, or reused if they do
 volumes:
   langfuse_postgres_data:
-    name: ai-agent_langfuse_postgres_data
-    external: true
+    name: langfuse_postgres_data
   langfuse_clickhouse_data:
-    name: ai-agent_langfuse_clickhouse_data
-    external: true
+    name: langfuse_clickhouse_data
   langfuse_clickhouse_logs:
-    name: ai-agent_langfuse_clickhouse_logs
-    external: true
+    name: langfuse_clickhouse_logs
   langfuse_clickhouse_config:
-    name: ai-agent_langfuse_clickhouse_config
-    external: true
+    name: langfuse_clickhouse_config
   langfuse_minio_data:
-    name: ai-agent_langfuse_minio_data
-    external: true
+    name: langfuse_minio_data
 
