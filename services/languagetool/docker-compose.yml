@@ -1,0 +1,39 @@
+# LanguageTool Local Deployment
+# This compose file runs LanguageTool as a local HTTP service for grammar/spell checking.
+#
+# Usage:
+#   docker compose up -d        # Start in background
+#   docker compose logs -f      # View logs
+#   docker compose down         # Stop
+#   docker compose pull         # Update to latest image
+#
+# API endpoint: http://localhost:8010/v2/check
+# Example: curl --data "language=en-US&text=a simple test" http://localhost:8010/v2/check
+
+services:
+  languagetool:
+    image: erikvl87/languagetool:latest
+    container_name: languagetool
+    restart: unless-stopped
+    ports:
+      # LanguageTool default port is 8010
+      - "8010:8010"
+    environment:
+      # Java heap size - increase for better performance with large texts
+      # Default: Xms=256m, Xmx=512m
+      - Java_Xms=${LANGUAGETOOL_XMS:-256m}
+      - Java_Xmx=${LANGUAGETOOL_XMX:-1g}
+      # Pipeline prewarming - faster first request but slower startup
+      - langtool_pipelinePrewarming=${LANGUAGETOOL_PREWARM:-false}
+    # Optional: mount n-gram data for improved error detection
+    # volumes:
+    #   - ./ngrams:/ngrams:ro
+    # environment:
+    #   - langtool_languageModel=/ngrams
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8010/v2/languages"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+

@@ -22,6 +22,7 @@ tools/
 | OpenMemory API | 8787 | Cross-project memory for agents |
 | OpenMemory Dashboard | 3737 | Web UI for memory inspection |
 | Piper TTS | 5847 | Local text-to-speech |
+| LanguageTool | 8010 | Grammar and spell checking API |
 | LangFuse Web | 13000 | LLM observability UI |
 | LangFuse Worker | 13030 | Background trace processing |
 | LangFuse Postgres | 15433 | LangFuse database |
