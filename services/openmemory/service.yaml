@@ -1,0 +1,40 @@
+# OpenMemory Service Configuration
+# Machine-readable metadata for the Tools CLI
+
+name: OpenMemory
+description: Persistent memory layer for AI agents with semantic search
+category: core
+
+vendor:
+  url: https://github.com/CaviraOSS/OpenMemory.git
+  ref: v1.2.3  # Pinned: later versions removed dashboard source
+
+ports:
+  - name: API
+    port: 8787
+    health_endpoint: /health
+  - name: Dashboard
+    port: 3737
+    health_endpoint: /
+
+env_vars:
+  - name: OPENAI_API_KEY
+    required: true
+    secret: true
+    description: OpenAI API key for embeddings
+
+dependencies:
+  system:
+    - docker
+    - docker-compose
+  services: []
+
+# Lifecycle commands (optional - defaults to docker-compose)
+lifecycle:
+  start: docker compose up -d
+  stop: docker compose down
+  restart: docker compose restart
+  install: ./update.sh
+  logs: docker compose logs
+  status: docker compose ps --quiet | grep -q . && exit 0 || exit 1
+

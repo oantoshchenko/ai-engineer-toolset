@@ -1,0 +1,26 @@
+# Piper TTS Service Configuration
+# Machine-readable metadata for the Tools CLI
+
+name: Piper TTS
+description: Local text-to-speech using Piper neural voices
+category: optional
+
+vendor:
+  url: https://github.com/CryptoDappDev/piper-tts-mcp.git
+  ref: main
+
+ports:
+  - name: HTTP
+    port: 5847
+    # No GET health endpoint - service only accepts POST
+    health_endpoint: null
+
+env_vars: []
+
+dependencies:
+  system:
+    - docker
+    - docker-compose
+    - uv
+  services: []
+

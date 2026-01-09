@@ -1,0 +1,31 @@
+# LangFuse Service Configuration
+# Machine-readable metadata for the Tools CLI
+
+name: LangFuse
+description: LLM observability and tracing platform
+category: optional
+
+vendor: null
+
+ports:
+  - name: Web UI
+    port: 13000
+    health_endpoint: /
+  - name: Worker
+    port: 13030
+    health_endpoint: null
+  - name: ClickHouse HTTP
+    port: 18123
+    health_endpoint: /ping
+
+env_vars: []
+
+dependencies:
+  system:
+    - docker
+    - docker-compose
+  services: []
+
+notes:
+  login: "admin@aiagent.local / admin123"
+

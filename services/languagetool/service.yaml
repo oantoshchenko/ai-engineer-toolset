@@ -1,0 +1,30 @@
+# LanguageTool Service Configuration
+# Machine-readable metadata for the Tools CLI
+
+name: LanguageTool
+description: Grammar and spell checking API
+category: optional
+
+vendor: null
+
+ports:
+  - name: API
+    port: 8010
+    health_endpoint: /v2/languages
+
+env_vars:
+  - name: LANGUAGETOOL_XMS
+    required: false
+    default: "256m"
+    description: Java minimum heap size
+  - name: LANGUAGETOOL_XMX
+    required: false
+    default: "1g"
+    description: Java maximum heap size
+
+dependencies:
+  system:
+    - docker
+    - docker-compose
+  services: []
+
