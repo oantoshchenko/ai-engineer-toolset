@@ -261,6 +261,33 @@ Store anything worth remembering:
 
 Don't pollute with noise. Ask: "Would this help a future agent?"
 
+## Mid-Task Querying
+
+Before taking significant actions, query memory for relevant context:
+- **Writing tests**: "Sasha's testing preferences", "test patterns in [project]"
+- **Making architectural decisions**: "Sasha's preferences for [topic]"
+- **Choosing libraries/tools**: "Sasha's preferred tools for [task]"
+- **Writing code**: "coding style preferences", "[language] patterns Sasha uses"
+- **Debugging**: "known issues with [component]", "past problems in [area]"
+
+Pattern: discover something → query memory for context → act with that context.
+
+## What to Store (Bias Toward Storing)
+
+When in doubt, store it. Categories to actively capture:
+
+| Category | Examples |
+|----------|----------|
+| **Preferences** | "Prefers explicit assertions with named variables in tests" |
+| **Coding Style** | "Uses early returns, avoids deep nesting" |
+| **Tool Choices** | "Uses uv over pip", "Prefers pytest over unittest" |
+| **Project Context** | "tools repo: MCP infrastructure hub, Docker + poetry" |
+| **Decisions Made** | "Chose X over Y because Z" |
+| **Gotchas/Quirks** | "Augment sometimes hangs after Say tool — not a tool issue" |
+| **Frustrations** | "Frustrated by flaky tests" — helps avoid repeating pain points |
+| **Work Completed** | "2025-01-08: Fixed OpenMemory DELETE 500 error" |
+| **Pending Items** | "Memory instructions need refinement — revisit after testing" |
+
 ## Memory Sectors
 
 | Sector | Purpose | Examples |
@@ -284,22 +311,23 @@ You are responsible for memory hygiene:
 ## Storage Guidelines
 
 - Keep memories atomic and concise (1-2 sentences)
+- Do not hesitate to store multiple memories
 - Use `user_id="sasha"` for all operations
 - Prefer updating/reinforcing existing memories over duplicating
 
 ## What NOT to Store
 
-- Transient debugging details
+- Transient debugging details (unless they reveal a pattern)
 - Information already in project-specific instructions
 - Exact code snippets (store the pattern/decision, not implementation)
 
 ## Timezone
 
 OpenMemory stores timestamps in UTC. Before querying by date:
+
 ```
 date "+Local: %Y-%m-%d %H:%M %Z | UTC: %Y-%m-%d %H:%M UTC" && date -u "+%Y-%m-%d %H:%M UTC"
 ```
-
 ---
 
 # Voice Communication (Say Tool)
