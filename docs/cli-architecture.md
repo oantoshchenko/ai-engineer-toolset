@@ -1,6 +1,6 @@
 # Tools CLI Architecture
 
-> **Status**: Phase 2 Complete (with lifecycle commands)
+> **Status**: Phase 3 Complete (with configuration management)
 > **Last Updated**: 2026-01-09
 
 This document describes the architecture and implementation plan for an interactive CLI/TUI for managing the Tools service stack.
@@ -245,16 +245,24 @@ class HealthMonitor:
 - Falls back to docker-compose if no custom commands specified
 - See `docs/service-yaml-spec.md` for full specification
 
-### Phase 3: Configuration
+### Phase 3: Configuration ✅
 > Goal: Guided setup and configuration editing
 
-- [ ] Create `.env` editor screen
-- [ ] Validate required env vars per service
-- [ ] First-run wizard for initial setup
-- [ ] Per-service config overrides
-- [ ] Secret masking in UI
+- [x] Create `.env` editor screen
+- [x] Validate required env vars per service
+- [x] First-run wizard for initial setup
+- [x] Per-service config overrides
+- [x] Secret masking in UI
 
 **Deliverable**: New users can complete setup entirely through TUI
+
+**Implementation Notes**:
+- `cli/screens/config_editor.py`: Full `.env` editor with Input widgets for each env var
+- `cli/screens/setup_wizard.py`: First-run wizard shown when required env vars are missing
+- Secret values use `password=True` on Input widgets for masking
+- Each service has its own `.env` file in its directory (e.g., `services/openmemory/.env`)
+- Press `c` in main screen to open config editor for selected service
+- Starting a service with missing required env vars triggers the setup wizard
 
 ### Phase 4: Polish
 > Goal: Production-ready developer tool

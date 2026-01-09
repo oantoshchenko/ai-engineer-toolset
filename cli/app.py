@@ -132,6 +132,7 @@ class ToolsApp(App[None]):
         Binding("R", "restart", "Restart", key_display="R"),
         Binding("i", "install", "Install"),
         Binding("l", "logs", "Logs"),
+        Binding("c", "config", "Config"),
         Binding("?", "help", "Help"),
     ]
 
@@ -167,11 +168,29 @@ class ToolsApp(App[None]):
         config = service_list.get_selected_config()
         return service_list, config
 
+    def _get_missing_required_env_vars(self, config: ServiceConfig) -> list[str]:
+        """Check for missing required environment variables."""
+        from cli.screens.config_editor import load_env_file
+
+        env_path = config.path / ".env"
+        current_env = load_env_file(env_path)
+        missing: list[str] = []
+        for env_config in config.env_vars:
+            if env_config.required and not current_env.get(env_config.name):
+                missing.append(env_config.name)
+        return missing
+
     def action_start(self) -> None:
         """Start the selected service."""
         service_list, config = self._get_selected()
         if config is None:
             self.notify("No service selected", severity="warning")
+            return
+
+        # Check for missing required env vars
+        missing = self._get_missing_required_env_vars(config)
+        if missing:
+            self._show_setup_wizard(config, missing)
             return
 
         self.notify(f"Starting {config.name}...", timeout=30)
@@ -180,6 +199,17 @@ class ToolsApp(App[None]):
             name=f"start-{config.dir_name}",
             exclusive=True,
         )
+
+    def _show_setup_wizard(self, config: ServiceConfig, missing: list[str]) -> None:
+        """Show the setup wizard for missing configuration."""
+        from cli.screens.setup_wizard import SetupWizardScreen
+
+        def on_wizard_complete(result: bool | None) -> None:
+            if result:
+                # Retry start after successful setup
+                self.action_start()
+
+        self.push_screen(SetupWizardScreen(config, missing), on_wizard_complete)
 
     def action_stop(self) -> None:
         """Stop the selected service."""
@@ -276,9 +306,24 @@ class ToolsApp(App[None]):
 
         self.push_screen(LogScreen(config))
 
+    async def action_config(self) -> None:
+        """Open configuration editor for the selected service."""
+        from cli.screens.config_editor import ConfigEditorScreen
+
+        _, config = self._get_selected()
+        if config is None:
+            self.notify("No service selected", severity="warning")
+            return
+
+        if not config.env_vars:
+            self.notify(f"{config.name} has no configurable env vars", timeout=3)
+            return
+
+        self.push_screen(ConfigEditorScreen(config))
+
     def action_help(self) -> None:
         """Show help."""
         self.notify(
-            "Keys: ↑↓=Navigate s=Start S=Stop R=Restart i=Install l=Logs r=Refresh q=Quit",
+            "Keys: ↑↓=Navigate s=Start S=Stop R=Restart i=Install l=Logs c=Config q=Quit",
             timeout=5,
         )
