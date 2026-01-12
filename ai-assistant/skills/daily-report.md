@@ -1,5 +1,6 @@
 ---
-type: "manual"
+type: "agent_requested"
+description: "Generate a structured daily report from OpenMemory and write it to the Obsidian daily note."
 ---
 
 # Daily Report Rule

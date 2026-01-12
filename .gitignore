@@ -32,3 +32,6 @@ node_modules/
 # Docker
 *.tar.gz
 
+#Augment Code
+.augment
+

@@ -24,9 +24,9 @@ services:
       OLLAMA_URL: http://host.docker.internal:11434
       OM_EMBEDDING_FALLBACK: synthetic
 
-      # Performance tier: hybrid is fast and works offline
-      # Options: hybrid (fastest), fast, smart, deep (best quality, needs API)
-      OM_TIER: hybrid
+      # Performance tier: deep for consistent ollama embeddings
+      # Options: hybrid (fastest), fast, smart, deep (best quality)
+      OM_TIER: deep
 
       # Storage
       OM_DB_PATH: /data/openmemory.sqlite
