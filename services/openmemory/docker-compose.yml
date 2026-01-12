@@ -18,11 +18,13 @@ services:
       - "8787:8080"
     volumes:
       - openmemory_data:/data
+      - ./models.yml:/models.yml:ro
     environment:
-      # Embedding provider: ollama
+      # Embedding provider: ollama with mxbai-embed-large (1024 dims)
       OM_EMBEDDINGS: ollama
       OLLAMA_URL: http://host.docker.internal:11434
       OM_EMBEDDING_FALLBACK: synthetic
+      OM_VEC_DIM: "1024"
 
       # Performance tier: deep for consistent ollama embeddings
       # Options: hybrid (fastest), fast, smart, deep (best quality)
