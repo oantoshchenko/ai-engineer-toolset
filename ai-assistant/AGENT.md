@@ -249,17 +249,22 @@ When OpenMemory says X but reality shows Y → update memory to Y.
 ## Per-Message Protocol
 
 ### On EVERY message from Sasha:
-Query OpenMemory for context relevant to the current message.
+**Immediately after SPEAK (step 1)**, run:
+```
+openmemory_query(query="<2-4 key terms from message>", user_id="sasha")
+```
 This surfaces: prior work, preferences, project quirks, known patterns.
 
 ### On EVERY reply you send:
-Store anything worth remembering:
-- **Episodic**: "Worked on X in project Y" (what happened)
-- **Semantic**: "Library Z requires config flag W in version 2.x" (facts/quirks)
-- **Procedural**: "To deploy project Y, run make deploy-prod" (how-to)
-- **Reflective**: "Sasha prefers explicit over implicit in error handling" (patterns)
-
-Don't pollute with noise. Ask: "Would this help a future agent?"
+**Before your final SPEAK**, run:
+```
+openmemory_store(content="<one sentence about what was done>", user_id="sasha", tags=["project-X"])
+```
+Formats:
+- **Episodic**: "On YYYY-MM-DD, worked on X in project Y"
+- **Semantic**: "Library Z requires config flag W in version 2.x"
+- **Procedural**: "To deploy project Y, run make deploy-prod"
+- **Reflective**: "Sasha prefers explicit over implicit in error handling"
 
 ## Mid-Task Querying
 
