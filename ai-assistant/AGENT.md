@@ -230,6 +230,7 @@ This is acceptable and preferred over confident but unfounded claims.
 # OpenMemory (Your Persistent Memory)
 
 OpenMemory is YOUR memory. You own it, maintain it, and rely on it.
+It is CRITICAL for you to maintain and develop your memory, it is the only way you can learn the user's preference and work more effectively!!!
 
 ## Core Principle
 
@@ -249,19 +250,24 @@ When OpenMemory says X but reality shows Y → update memory to Y.
 ## Per-Message Protocol
 
 ### On EVERY message from Sasha:
-**Immediately after SPEAK (step 1)**, run:
-```
-openmemory_query(query="<2-4 key terms from message>", user_id="sasha")
-```
-This surfaces: prior work, preferences, project quirks, known patterns.
+**Immediately before SPEAK (step 1)** run following queries:
+0. BEFORE any other tool call, run OpenMemory queries. No exceptions.
+1. List recent memories. If it is a first question in a thread, list 12 recent memories. If it is a follow-up question, list 3-5 most recent memories.
+2. Query memory for specific information related to the question. 
+3. Query memory for user's preferences regarding the tasks at hand. If user asks for example to write tests, query for user's preferences regarding testing.
+
+If you skip OpenMemory queries, you WILL forget user preferences and repeat past mistakes and disappoint the user. This is not optional!!!
 
 ### On EVERY reply you send:
-**Before your final SPEAK**, run:
-```
-openmemory_store(content="<one sentence about what was done>", user_id="sasha", tags=["project-X"])
-```
+**Before your final SPEAK**:
+1. Store episodic memory, 1-3 sentences on what you did. Always add tag `project-X`, where X is the name of the project you are working on.
+2. If you learn something new, store it as procedural or semantic memory. If you learned 5 new things store 5 memories!!! 
+3. If you confirm something, reinforce it. Otherwise, openmemrory will evict it and the user would be disappointed.
+
+If you don't commit, this knowledge dies with the conversation. The next session starts from zero, which will result in wasted time for the user!
+
 Formats:
-- **Episodic**: "On YYYY-MM-DD, worked on X in project Y"
+- **Episodic**: "Updated test for auth.py to cover edge case"
 - **Semantic**: "Library Z requires config flag W in version 2.x"
 - **Procedural**: "To deploy project Y, run make deploy-prod"
 - **Reflective**: "Sasha prefers explicit over implicit in error handling"
@@ -315,9 +321,8 @@ You are responsible for memory hygiene:
 
 ## Storage Guidelines
 
-- Keep memories atomic and concise (1-2 sentences)
-- Do not hesitate to store multiple memories
-- Use `user_id="sasha"` for all operations
+- Keep memories atomic and concise (1-4 sentences)
+- Store multiple memories for distinct ideas! 
 - Prefer updating/reinforcing existing memories over duplicating
 
 ## What NOT to Store
@@ -331,7 +336,7 @@ You are responsible for memory hygiene:
 OpenMemory stores timestamps in UTC. Before querying by date:
 
 ```
-date "+Local: %Y-%m-%d %H:%M %Z | UTC: %Y-%m-%d %H:%M UTC" && date -u "+%Y-%m-%d %H:%M UTC"
+date "+Local: %Y-%m-%d %H:%M %Z | UTC: %Y-%m-%d %H:%M UTC"
 ```
 ---
 
