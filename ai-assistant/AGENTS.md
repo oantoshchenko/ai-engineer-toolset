@@ -267,10 +267,10 @@ If you skip OpenMemory queries, you WILL forget user preferences and repeat past
 If you don't commit, this knowledge dies with the conversation. The next session starts from zero, which will result in wasted time for the user!
 
 Formats:
-- **Episodic**: "Updated test for auth.py to cover edge case"
+- **Episodic**: "Updated auth.py test to cover edge case" — use `metadata: { "sector": "episodic" }`
 - **Semantic**: "Library Z requires config flag W in version 2.x"
-- **Procedural**: "To deploy project Y, run make deploy-prod"
-- **Reflective**: "Sasha prefers explicit over implicit in error handling"
+- **Procedural**: "To deploy project Y: first build, then run make deploy-prod"
+- **Reflective**: "I've noticed Sasha prefers explicit over implicit in error handling"
 
 ## Mid-Task Querying
 
@@ -296,21 +296,27 @@ When in doubt, store it. Categories to actively capture:
 | **Decisions Made** | "Chose X over Y because Z" |
 | **Gotchas/Quirks** | "Augment sometimes hangs after Say tool — not a tool issue" |
 | **Frustrations** | "Frustrated by flaky tests" — helps avoid repeating pain points |
-| **Work Completed** | "2025-01-08: Fixed OpenMemory DELETE 500 error" |
+| **Work Completed** | "On 2025-01-08, fixed OpenMemory DELETE 500 error" |
 | **Pending Items** | "Memory instructions need refinement — revisit after testing" |
 
 ## Memory Sectors
 
-| Sector | Purpose | Examples |
-|--------|---------|----------|
-| **semantic** | Facts, knowledge, timeless truths | "Sasha prefers TDD", "AI-Agent uses poetry" |
-| **episodic** | Events, time-bound occurrences | "On 2024-12-06, refined OpenMemory instructions" |
-| **procedural** | Skills, how-to, action patterns | "To update Langfuse, run ./scripts/langfuse-maintenance.sh" |
-| **emotional** | Feelings, sentiment | "Sasha frustrated by flaky tests" |
-| **reflective** | Meta-cognition, insights | "When Sasha asks 'why', they want root cause" |
+| Sector | Purpose | Decay | When to Use |
+|--------|---------|-------|-------------|
+| **episodic** | Events, work done, time-bound occurrences | Fast (λ=0.015) | Recording what you did in this session |
+| **semantic** | Facts, knowledge, timeless truths | Slow (λ=0.005) | User preferences, project facts, rules |
+| **procedural** | Skills, how-to, action patterns | Slow (λ=0.008) | Commands, workflows, step-by-step processes |
+| **emotional** | Feelings, sentiment | Fast (λ=0.020) | User frustrations, excitement, reactions |
+| **reflective** | Meta-cognition, insights | Very slow (λ=0.001) | Patterns you've noticed, lessons learned |
 
-To force a sector: `metadata: { "sector": "episodic" }`
-Do not put everything in semantic or procedural sectors. If in doubt, use episodic. This is important, to use proper sectors, otherwise your recall will degrade and user will be disappointed!
+**CRITICAL: Always specify sector in metadata for episodic memories.**
+
+Automatic classification often misclassifies event descriptions as semantic/procedural. To force the correct sector, use:
+```
+metadata: { "sector": "episodic" }
+```
+
+This is **required** for all work-completed memories. Without it, events get stored as semantic facts (slow decay) instead of episodic events (fast decay), polluting your memory with stale work logs.
 
 ## Memory Maintenance
 
