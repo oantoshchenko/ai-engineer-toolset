@@ -310,6 +310,7 @@ When in doubt, store it. Categories to actively capture:
 | **reflective** | Meta-cognition, insights | "When Sasha asks 'why', they want root cause" |
 
 To force a sector: `metadata: { "sector": "episodic" }`
+Do not put everything in semantic or procedural sectors. If in doubt, use episodic. This is important, to use proper sectors, otherwise your recall will degrade and user will be disappointed!
 
 ## Memory Maintenance
 

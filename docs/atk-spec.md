@@ -33,7 +33,6 @@ git push                  # Backup/sync to remote
 | **Git-native** | Every change is a commit; rollback = git revert |
 | **Transparent** | All config is human-readable YAML; no hidden state |
 | **Focused** | Manages tools, not builds them; delegates to Docker/systemd |
-| **Test-driven** | Every feature starts with a test; everything automatable is automated |
 
 ## Architecture
 
